@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharma Sales &amp; Demand Data Mart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a clinical lab report - summary strip, then one section per business question (Q1-Q3), then planning tools and data quality. */
+:root {
+  --bg: #f4f6f6; --panel: #ffffff; --ink: #132a30; --muted: #5b6e73; --line: #dbe2e3;
+  --accent: #0e6e74;
+  --c1: #0e6e74; --c2: #c9821b; --c3: #6a5fb3; --c4: #3f8f4e; --c5: #b9475a; --c6: #3d7fb8; --c7: #8a6a4f;
+  --good: #2f8a4a; --warn: #b7791f; --bad: #b83a3a;
+  --display: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1a1c; --panel: #162426; --ink: #e3ecec; --muted: #9db0b3; --line: #2a3b3e;
+    --accent: #4fb8b8; --c1: #4fb8b8; --c2: #e0a54a; --c3: #a49bea; --c4: #6cc17e; --c5: #e57a8c; --c6: #79b3e6; --c7: #c4a585;
+    --good: #5cc27a; --warn: #e0a54a; --bad: #ef7a7a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1a1c; --panel: #162426; --ink: #e3ecec; --muted: #9db0b3; --line: #2a3b3e;
+  --accent: #4fb8b8; --c1: #4fb8b8; --c2: #e0a54a; --c3: #a49bea; --c4: #6cc17e; --c5: #e57a8c; --c6: #79b3e6; --c7: #c4a585;
+  --good: #5cc27a; --warn: #e0a54a; --bad: #ef7a7a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; display: grid; gap: 22px; }
+header.top { display: grid; gap: 6px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+h1 { font-family: var(--display); font-size: 28px; font-weight: 600; margin: 0; text-wrap: balance; }
+h2 { font-size: 19px; font-weight: 600; margin: 0; text-wrap: balance; }
+h3 { font-size: 15px; font-weight: 600; margin: 0; }
+p { margin: 0; max-width: 72ch; }
+.muted { color: var(--muted); }
+.pipeline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); font-size: 12px; }
+.pipeline span.step { padding: 3px 9px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+.pipeline span.arrow { color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 2px; }
+.tile .v { font-family: var(--mono); font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.tile .l { font-size: 12.5px; color: var(--muted); }
+section.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.qtag { font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 500; }
+.row2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+.controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: 13.5px; }
+select, input[type=range] { font: inherit; color: var(--ink); }
+select { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+label { display: inline-flex; gap: 8px; align-items: center; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart svg text { fill: var(--muted); font-family: var(--mono); font-size: 11px; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px; font-family: var(--mono); padding: 6px 8px; border-radius: 5px; white-space: nowrap; opacity: 0; transition: opacity .08s; z-index: 3; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; }
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 500; border: 1px solid currentColor; white-space: nowrap; }
+.pill.good { color: var(--good); } .pill.warn { color: var(--warn); } .pill.bad { color: var(--bad); }
+.explain { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; font-size: 13.5px; }
+.explain > div { border-left: 3px solid var(--line); padding: 2px 0 2px 12px; }
+.explain b { display: block; font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+code, .formula { font-family: var(--mono); font-size: 12.5px; }
+.finding { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; font-size: 14px; }
+.slider { display: grid; gap: 4px; min-width: 240px; flex: 1; }
+.slider output { font-family: var(--mono); font-weight: 500; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+footer { font-size: 12.5px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow" id="runinfo">Milestone 1 · SDI data mart</div>
+  <h1>Pharma Sales &amp; Demand Data Mart</h1>
+  <p class="muted">Query layer of the Airflow pipeline. Every number below is read from the DuckDB star schema (mart views) produced by the DAG <code>pharma_sdi_data_mart</code>; 2023-01 to 2025-12, US network of 60 pharmacies, 12 hospitals and 6 warehouses.</p>
+  <div class="pipeline" aria-label="Pipeline stages">
+    <span class="step">7 OLTP CSVs</span><span class="arrow">→</span><span class="step">raw</span><span class="arrow">→</span>
+    <span class="step">staging + 25 DQ checks</span><span class="arrow">→</span><span class="step">10 dimensions</span><span class="arrow">→</span>
+    <span class="step">3 facts + 18 DQ checks</span><span class="arrow">→</span><span class="step">mart views</span><span class="arrow">→</span><span class="step">this page</span>
+  </div>
+</header>
+
+<div class="tiles" id="tiles"></div>
+
+<section class="card" id="q1">
+  <div><div class="qtag">Q1 · FactPharmacySales × Date, Medicine, Channel, Pharmacy, Location</div>
+  <h2>How do sales change month by month, by channel, disease and state?</h2></div>
+  <div class="chart" id="q1chart"></div>
+  <div class="legend" id="q1legend"></div>
+  <div class="finding" id="q1finding"></div>
+  <div class="row2">
+    <div style="display:grid;gap:10px;min-width:0">
+      <div class="controls"><h3>Net sales by disease category</h3>
+        <label for="q1year">Year <select id="q1year"></select></label></div>
+      <div class="tablewrap"><table id="q1table"></table></div>
+    </div>
+    <div style="display:grid;gap:10px;min-width:0">
+      <h3 id="q1statetitle">Net sales by state</h3>
+      <div class="chart" id="q1state"></div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="q2">
+  <div><div class="qtag">Q2 · FactHospitalDemand ⋈ FactPharmacySales on Date (month), Hospital, Medicine</div>
+  <h2>How does forecast demand compare with actual hospital consumption and hospital-pharmacy sales?</h2></div>
+  <div class="controls"><label for="q2disease">Disease category <select id="q2disease"></select></label></div>
+  <div class="chart" id="q2chart"></div>
+  <div class="legend" id="q2legend"></div>
+  <div class="finding" id="q2finding"></div>
+  <div class="row2">
+    <div style="min-width:0"><h3>By hospital (2023-2025)</h3><div class="tablewrap"><table id="q2hosp"></table></div></div>
+    <div style="min-width:0"><h3>Largest monthly forecast misses</h3><div class="tablewrap"><table id="q2gaps"></table></div></div>
+  </div>
+  <div class="explain">
+    <div><b>Forecast accuracy, formal</b><span class="formula">Accuracy = 1 − Σ|Forecast − Consumed| ÷ Σ Consumed</span> (1 − WAPE, summed over hospital × medicine × month).</div>
+    <div><b>In plain words</b>Add up how many packs each forecast was off by, divide by everything that was actually used, and subtract from 100%. 94% means the forecasts were off by about 6 packs for every 100 used.</div>
+  </div>
+</section>
+
+<section class="card" id="q3">
+  <div><div class="qtag">Q3 · FactHospitalDemand ⋈ FactInventorySnapshot on Date (month), Medicine (disease), Location (state)</div>
+  <h2>When hospitals could not get medicine, was the warehouse in their state out of stock?</h2></div>
+  <div class="tiles" id="q3tiles"></div>
+  <div class="finding" id="q3finding"></div>
+  <div class="tablewrap"><table id="q3table"></table></div>
+</section>
+
+<section class="card" id="whatif">
+  <div><div class="qtag">What-if · mart.what_if_base (last 12 months of run-rates)</div>
+  <h2>What happens to stock if demand rises or the next supply is delayed?</h2></div>
+  <div class="controls">
+    <div class="slider"><label for="wDemand">Demand change</label><input id="wDemand" type="range" min="-20" max="100" step="5" value="20"><output id="wDemandOut">+20%</output></div>
+    <div class="slider"><label for="wDelay">Supply delay (days without replenishment)</label><input id="wDelay" type="range" min="0" max="120" step="5" value="60"><output id="wDelayOut">60 days</output></div>
+  </div>
+  <div class="tiles" id="wtiles"></div>
+  <div class="tablewrap"><table id="wtable"></table></div>
+  <div class="explain">
+    <div><b>Formal</b><span class="formula">Outflow′ = AvgDailyShipped × (1 + Δdemand)<br>DaysOfCover′ = CurrentStock ÷ Outflow′<br>Shortfall = max(0, Outflow′ × Delay − CurrentStock)<br>Revenue at risk = Shortfall × NetPricePerPack</span></div>
+    <div><b>In plain words</b>Take how many packs leave the warehouses per day, scale it up by the demand change, and see how many days today's stock lasts. If the delivery is late by more days than that, the packs you cannot ship are the shortfall, and multiplying by the average selling price estimates the sales lost.</div>
+  </div>
+</section>
+
+<section class="card" id="ci">
+  <div><div class="qtag">Resampling · mart.kpi_confidence_intervals (bootstrap)</div>
+  <h2>How precise are the yearly sales figures?</h2></div>
+  <div class="controls"><label for="ciyear">Year <select id="ciyear"></select></label></div>
+  <div class="tablewrap"><table id="citable"></table></div>
+  <div class="explain">
+    <div><b>Formal</b>Poisson bootstrap: in each of <span id="cireps">200</span> replicates every transaction gets weight w ~ Poisson(1); the KPI is recomputed, and the 95% interval is the 2.5th–97.5th percentile of the replicates.</div>
+    <div><b>In plain words</b>We re-draw the 500,000 sales many times at random, with repeats allowed, and recompute each figure. If it barely moves, it is reliable. "± 1.5%" means a different but similar set of customers would very likely have given a figure within 1.5% of this one.</div>
+  </div>
+</section>
+
+<section class="card" id="dq">
+  <div><div class="qtag">Pipeline health · audit.dq_results, audit.load_log</div>
+  <h2>Did the load pass its data-quality checks?</h2></div>
+  <div class="row2">
+    <div style="min-width:0"><h3>Star schema row counts</h3><div class="tablewrap"><table id="counts"></table></div></div>
+    <div style="min-width:0"><h3 id="dqtitle">Checks</h3><div class="tablewrap" style="max-height:420px;overflow:auto"><table id="dqtable"></table></div></div>
+  </div>
+</section>
+
+<footer id="foot"></footer>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA = /*__DASHBOARD_DATA__*/null;
+</script>
+<script>
+(function () {
+  const D = DATA;
+  const $ = (id) => document.getElementById(id);
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const fmt = (n, d = 0) => n == null ? '–' : Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const usd = (n) => n == null ? '–' : (Math.abs(n) >= 1e6 ? '$' + fmt(n / 1e6, 2) + 'M' : Math.abs(n) >= 1e3 ? '$' + fmt(n / 1e3, 1) + 'k' : '$' + fmt(n, 0));
+  const pct = (n, d = 1) => n == null ? '–' : fmt(n, d) + '%';
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const tip = $('tip');
+  function el(tag, attrs, parent, text) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+  function h(tag, text, cls) { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; }
+  function showTip(evt, container, lines) {
+    tip.textContent = ''; lines.forEach((l, i) => { if (i) tip.appendChild(document.createElement('br')); tip.appendChild(document.createTextNode(l)); });
+    tip.style.opacity = 1;
+    const r = container.getBoundingClientRect(); const tw = tip.offsetWidth;
+    let x = evt.clientX + window.scrollX + 12; if (x + tw > window.scrollX + r.right) x = evt.clientX + window.scrollX - tw - 12;
+    tip.style.left = Math.max(window.scrollX + 4, x) + 'px'; tip.style.top = (evt.clientY + window.scrollY - 10) + 'px';
+  }
+  const hideTip = () => { tip.style.opacity = 0; };
+  function niceMax(v) { if (v <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))); const m = v / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p; }
+  function table(id, cols, rows) {
+    const t = $(id); t.textContent = '';
+    const tr = h('tr'); cols.forEach(c => { const th = h('th', c.label); if (c.num) th.className = 'n'; tr.appendChild(th); }); const thead = h('thead'); thead.appendChild(tr); t.appendChild(thead);
+    const tb = h('tbody');
+    rows.forEach(r => { const row = h('tr'); cols.forEach(c => { const td = h('td'); if (c.num) td.className = 'n'; const v = c.render ? c.render(r) : r[c.key]; if (v instanceof Node) td.appendChild(v); else td.textContent = v; row.appendChild(td); }); tb.appendChild(row); });
+    t.appendChild(tb);
+  }
+  const pill = (text, kind) => h('span', text, 'pill ' + kind);
+  const tile = (parent, value, label) => { const d = h('div', null, 'tile'); d.appendChild(h('div', value, 'v')); d.appendChild(h('div', label, 'l')); parent.appendChild(d); };
+
+  // ---------- multi-line chart ----------
+  function lineChart(container, labels, series, opts = {}) {
+    container.textContent = '';
+    const W = Math.max(320, container.clientWidth), H = opts.height || 260, m = { t: 12, r: 14, b: 26, l: 56 };
+    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': opts.label || 'chart' }, container);
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const maxV = niceMax(Math.max(...series.flatMap(s => s.values.filter(v => v != null))));
+    const x = (i) => m.l + (labels.length === 1 ? iw / 2 : i * iw / (labels.length - 1));
+    const y = (v) => m.t + ih - (v / maxV) * ih;
+    for (let k = 0; k <= 4; k++) {
+      const v = maxV * k / 4; el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: css('--line'), 'stroke-width': 1 }, svg);
+      el('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg, opts.yfmt ? opts.yfmt(v) : fmt(v));
+    }
+    const step = Math.ceil(labels.length / Math.max(2, Math.floor(iw / 70)));
+    labels.forEach((lb, i) => { if (i % step === 0 || i === labels.length - 1) el('text', { x: x(i), y: H - 6, 'text-anchor': 'middle' }, svg, lb); });
+    series.forEach(s => {
+      const pts = s.values.map((v, i) => v == null ? null : [x(i), y(v)]).filter(Boolean);
+      if (s.area) el('path', { d: `M${pts[0][0]},${y(0)} ` + pts.map(p => `L${p[0]},${p[1]}`).join(' ') + ` L${pts[pts.length - 1][0]},${y(0)} Z`, fill: s.color, opacity: .10 }, svg);
+      el('path', { d: 'M' + pts.map(p => p.join(',')).join(' L'), fill: 'none', stroke: s.color, 'stroke-width': s.width || 2, 'stroke-dasharray': s.dash || '' }, svg);
+      const last = pts[pts.length - 1]; el('circle', { cx: last[0], cy: last[1], r: 3.5, fill: s.color }, svg);
+    });
+    const guide = el('line', { y1: m.t, y2: m.t + ih, stroke: css('--muted'), 'stroke-dasharray': '3 3', opacity: 0 }, svg);
+    const hit = el('rect', { x: m.l, y: m.t, width: iw, height: ih, fill: 'transparent' }, svg);
+    hit.addEventListener('mousemove', (e) => {
+      const r = svg.getBoundingClientRect(); const px = (e.clientX - r.left) * (W / r.width);
+      const i = Math.max(0, Math.min(labels.length - 1, Math.round((px - m.l) / (iw / Math.max(1, labels.length - 1)))));
+      guide.setAttribute('x1', x(i)); guide.setAttribute('x2', x(i)); guide.setAttribute('opacity', .6);
+      showTip(e, container, [labels[i], ...series.map(s => s.name + ': ' + (opts.yfmt ? opts.yfmt(s.values[i]) : fmt(s.values[i])))]);
+    });
+    hit.addEventListener('mouseleave', () => { guide.setAttribute('opacity', 0); hideTip(); });
+  }
+  function legend(id, series) { const L = $(id); L.textContent = ''; series.forEach(s => { const sp = h('span'); const i = h('i'); i.style.background = s.color; sp.appendChild(i); sp.appendChild(document.createTextNode(s.name)); L.appendChild(sp); }); }
+
+  // ---------- horizontal bar chart ----------
+  function barChart(container, rows, valueKey, labelKey, color, vfmt) {
+    container.textContent = '';
+    const W = Math.max(300, container.clientWidth), bh = 20, gap = 6, m = { t: 4, r: 70, b: 4, l: 40 };
+    const H = m.t + m.b + rows.length * (bh + gap);
+    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'bar chart' }, container);
+    const maxV = Math.max(...rows.map(r => r[valueKey]));
+    rows.forEach((r, i) => {
+      const yy = m.t + i * (bh + gap), w = (W - m.l - m.r) * r[valueKey] / maxV;
+      el('text', { x: m.l - 6, y: yy + 14, 'text-anchor': 'end' }, svg, r[labelKey]);
+      const b = el('rect', { x: m.l, y: yy, width: Math.max(1, w), height: bh, rx: 3, fill: color }, svg);
+      el('text', { x: m.l + w + 6, y: yy + 14 }, svg, vfmt(r[valueKey]));
+      b.addEventListener('mousemove', (e) => showTip(e, container, [r[labelKey], vfmt(r[valueKey])]));
+      b.addEventListener('mouseleave', hideTip);
+    });
+  }
+
+  if (!D) { $('runinfo').textContent = 'No data yet: run the DAG to fill this page.'; return; }
+  $('runinfo').textContent = `Milestone 1 · SDI data mart · Airflow run ${D.run_id} · data refreshed ${D.generated_at.replace('T', ' ').replace('Z', ' UTC')}`;
+
+  // ---------- summary tiles (2025) ----------
+  const k25 = D.kpi_monthly.filter(r => r.YearMonth.startsWith('2025'));
+  const sum = (a, k) => a.reduce((s, r) => s + (r[k] || 0), 0);
+  const counts = Object.fromEntries(D.table_counts.map(r => [r.TableName, r.Rows]));
+  const dqPass = D.dq_latest.filter(r => r.status === 'PASS').length;
+  const net25 = sum(k25, 'NetSalesUSD');
+  const lastK = D.kpi_monthly[D.kpi_monthly.length - 1];
+  const T = $('tiles');
+  tile(T, fmt(counts['dwh.fact_pharmacy_sales']), 'sales transactions loaded');
+  tile(T, usd(net25), 'net sales 2025');
+  tile(T, pct(k25.reduce((s, r) => s + r.ForecastAccuracyPct * r.ConsumedPacks, 0) / sum(k25, 'ConsumedPacks')), 'forecast accuracy 2025');
+  tile(T, pct(k25.reduce((s, r) => s + r.StockoutRatePct, 0) / k25.length, 2), 'warehouse stockout rate 2025');
+  tile(T, fmt(lastK.DaysOfCover, 0) + ' days', 'stock cover, ' + lastK.YearMonth);
+  tile(T, `${dqPass} / ${D.dq_latest.length}`, 'data-quality checks passed');
+
+  // ---------- Q1 ----------
+  const months = [...new Set(D.kpi_monthly.map(r => r.YearMonth))];
+  const chans = ['Retail Pharmacy', 'Hospital Pharmacy', 'E-commerce'];
+  const ccol = [css('--c1'), css('--c2'), css('--c3')];
+  const q1series = chans.map((c, i) => ({ name: c, color: ccol[i], values: months.map(mo => (D.q1_by_channel_month.find(r => r.YearMonth === mo && r.ChannelGroup === c) || {}).NetSalesUSD || 0) }));
+  const drawQ1 = () => lineChart($('q1chart'), months, q1series, { yfmt: usd, label: 'Monthly net sales by channel' });
+  drawQ1(); legend('q1legend', q1series);
+  const peak = D.kpi_monthly.reduce((a, b) => b.NetSalesUSD > a.NetSalesUSD ? b : a);
+  const totals = chans.map(c => sum(D.q1_by_disease_year.filter(r => r.ChannelGroup === c), 'NetSalesUSD'));
+  const all = totals.reduce((a, b) => a + b, 0);
+  $('q1finding').textContent = `Retail pharmacies bring ${pct(100 * totals[0] / all, 0)} of net sales, hospital pharmacies ${pct(100 * totals[1] / all, 0)} and e-commerce ${pct(100 * totals[2] / all, 0)}. Sales spike every winter; the peak month is ${peak.YearMonth} (${usd(peak.NetSalesUSD)}). Note: sales data starts on 30 Jan 2023, so January 2023 is a partial month.`;
+  const years = [...new Set(D.q1_by_disease_year.map(r => r.Year))];
+  [$('q1year'), $('ciyear')].forEach(s => years.forEach(y => { const o = h('option', String(y)); o.value = y; s.appendChild(o); }));
+  $('q1year').value = years[years.length - 1]; $('ciyear').value = years[years.length - 1];
+  function drawQ1Year() {
+    const y = +$('q1year').value;
+    const rows = D.q1_by_disease_year.filter(r => r.Year === y);
+    const cats = [...new Set(rows.map(r => r.DiseaseCategory))];
+    const agg = cats.map(c => { const rr = rows.filter(r => r.DiseaseCategory === c); const o = { DiseaseCategory: c, Packs: sum(rr, 'PacksSold'), Net: sum(rr, 'NetSalesUSD'), GM: sum(rr, 'GrossMarginUSD') }; chans.forEach(ch => o[ch] = sum(rr.filter(r => r.ChannelGroup === ch), 'NetSalesUSD')); return o; }).sort((a, b) => b.Net - a.Net);
+    table('q1table', [
+      { label: 'Disease category', key: 'DiseaseCategory' },
+      { label: 'Packs', num: 1, render: r => fmt(r.Packs) },
+      { label: 'Net sales', num: 1, render: r => usd(r.Net) },
+      { label: 'Hospital pharm.', num: 1, render: r => pct(100 * r['Hospital Pharmacy'] / r.Net, 0) },
+      { label: 'E-com', num: 1, render: r => pct(100 * r['E-commerce'] / r.Net, 0) },
+      { label: 'Margin', num: 1, render: r => pct(100 * r.GM / r.Net) }], agg);
+    $('q1statetitle').textContent = `Net sales by pharmacy state, ${y}`;
+    barChart($('q1state'), D.q1_by_state_year.filter(r => r.Year === y).sort((a, b) => b.NetSalesUSD - a.NetSalesUSD), 'NetSalesUSD', 'State', css('--c1'), usd);
+  }
+  $('q1year').addEventListener('change', drawQ1Year); drawQ1Year();
+
+  // ---------- Q2 ----------
+  const dcat = [...new Set(D.q2_disease_month.map(r => r.DiseaseCategory))].sort();
+  const sel = $('q2disease'); const oAll = h('option', 'All categories'); oAll.value = ''; sel.appendChild(oAll);
+  dcat.forEach(c => { const o = h('option', c); o.value = c; sel.appendChild(o); });
+  function drawQ2() {
+    const c = sel.value; const rows = D.q2_disease_month.filter(r => !c || r.DiseaseCategory === c);
+    const s = [
+      { name: 'Forecast demand', color: css('--c2'), dash: '5 4', values: months.map(mo => sum(rows.filter(r => r.YearMonth === mo), 'ForecastPacks')) },
+      { name: 'Hospital consumption', color: css('--c1'), area: true, values: months.map(mo => sum(rows.filter(r => r.YearMonth === mo), 'ConsumedPacks')) },
+      { name: 'Sold by hospital pharmacies', color: css('--c3'), values: months.map(mo => sum(rows.filter(r => r.YearMonth === mo), 'SoldPacks')) }];
+    lineChart($('q2chart'), months, s, { label: 'Forecast vs consumption vs sales (packs)' }); legend('q2legend', s);
+    const F = sum(rows, 'ForecastPacks'), C = sum(rows, 'ConsumedPacks'), S = sum(rows, 'SoldPacks');
+    $('q2finding').textContent = `${c || 'Across all categories'}: forecasts total ${fmt(F)} packs against ${fmt(C)} consumed (bias ${pct(100 * (F - C) / C)}), so hospitals are systematically under-forecast. Hospital pharmacies sell only ${pct(100 * S / C)} of what hospitals consume: most hospital demand is supplied directly, not through pharmacy sales.`;
+  }
+  sel.addEventListener('change', drawQ2); drawQ2();
+  table('q2hosp', [
+    { label: 'Hospital', key: 'HospitalName' },
+    { label: 'Consumed', num: 1, render: r => fmt(r.ConsumedPacks) },
+    { label: 'Accuracy', num: 1, render: r => pill(pct(r.ForecastAccuracyPct), r.ForecastAccuracyPct >= 94 ? 'good' : r.ForecastAccuracyPct >= 92 ? 'warn' : 'bad') },
+    { label: 'Pharm. sold', num: 1, render: r => fmt(r.SoldPacks) },
+    { label: 'Unmet', num: 1, render: r => fmt(r.UnfulfilledPacks) }], D.q2_hospital_summary.slice().sort((a, b) => a.ForecastAccuracyPct - b.ForecastAccuracyPct));
+  table('q2gaps', [
+    { label: 'Month', key: 'YearMonth' }, { label: 'Hospital', key: 'HospitalName' }, { label: 'Medicine', key: 'GenericName' },
+    { label: 'Forecast', num: 1, render: r => fmt(r.ForecastPacks) }, { label: 'Consumed', num: 1, render: r => fmt(r.ConsumedPacks) },
+    { label: 'Error', num: 1, render: r => pct(r.AbsPctError) }], D.q2_biggest_gaps.slice(0, 10));
+
+  // ---------- Q3 ----------
+  const T3 = $('q3tiles');
+  const unmetAll = sum(D.q3_signal_summary, 'UnmetPacks');
+  D.q3_signal_summary.forEach(r => tile(T3, `${fmt(r.UnmetPacks)} packs`, `${r.SupplySideSignal} (${r.Cases} cases, ${pct(100 * r.UnmetPacks / unmetAll, 0)})`));
+  const had = D.q3_signal_summary.find(r => r.SupplySideSignal === 'Warehouse had stock') || { UnmetPacks: 0 };
+  $('q3finding').textContent = `${fmt(unmetAll)} packs of hospital demand went unmet over three years (tiny next to ${fmt(sum(D.kpi_monthly, 'ConsumedPacks'))} consumed). ${pct(100 * had.UnmetPacks / unmetAll, 0)} of it happened while the warehouse in the same state still held stock of that disease category, which points to allocation and delivery to hospitals rather than to a supply shortage.`;
+  table('q3table', [
+    { label: 'Month', key: 'YearMonth' }, { label: 'State', key: 'State' }, { label: 'Disease category', key: 'DiseaseCategory' },
+    { label: 'Unmet packs', num: 1, render: r => fmt(r.UnmetPacks) }, { label: 'Hosp. stockout days', num: 1, render: r => fmt(r.HospitalStockoutDays) },
+    { label: 'WH stockout snapshots', num: 1, render: r => fmt(r.WarehouseStockoutSnapshots) },
+    { label: 'Supply signal', render: r => pill(r.SupplySideSignal, r.SupplySideSignal === 'Warehouse had stock' ? 'warn' : r.SupplySideSignal.startsWith('Warehouse stockout') ? 'bad' : 'good') }], D.q3_unmet.slice(0, 15));
+
+  // ---------- What-if ----------
+  function drawWhatIf() {
+    const d = +$('wDemand').value / 100, delay = +$('wDelay').value;
+    $('wDemandOut').textContent = (d >= 0 ? '+' : '') + Math.round(d * 100) + '%'; $('wDelayOut').textContent = delay + ' days';
+    const rows = D.what_if_base.map(r => {
+      const out = r.AvgDailyShippedPacks * (1 + d); const cover = r.CurrentStockPacks / out;
+      const short = Math.max(0, out * delay - r.CurrentStockPacks);
+      return { ...r, out, cover, short, risk: short * r.NetPricePerPackUSD, extraSales: r.AvgDailyPacksSold * d * 365 * r.NetPricePerPackUSD, extraMargin: r.AvgDailyPacksSold * d * 365 * r.MarginPerPackUSD };
+    }).sort((a, b) => a.cover - b.cover);
+    const W = $('wtiles'); W.textContent = '';
+    const atRisk = rows.filter(r => r.short > 0);
+    tile(W, `${atRisk.length} of ${rows.length}`, 'disease categories run out before the delivery');
+    tile(W, fmt(sum(rows, 'short')) + ' packs', 'shortfall during the delay');
+    tile(W, usd(sum(rows, 'risk')), 'estimated sales at risk');
+    tile(W, (sum(rows, 'extraSales') >= 0 ? '+' : '') + usd(sum(rows, 'extraSales')), 'pharmacy sales change per year from demand');
+    table('wtable', [
+      { label: 'Disease category', key: 'DiseaseCategory' },
+      { label: 'Stock now', num: 1, render: r => fmt(r.CurrentStockPacks) },
+      { label: 'Packs / day', num: 1, render: r => fmt(r.out) },
+      { label: 'Days of cover', num: 1, render: r => fmt(r.cover, 0) },
+      { label: 'Status', render: r => r.short > 0 ? pill('Stockout in ' + fmt(r.cover, 0) + ' d', 'bad') : r.cover - delay < 14 ? pill('Under 2 weeks spare', 'warn') : pill('Covered', 'good') },
+      { label: 'Shortfall', num: 1, render: r => fmt(r.short) },
+      { label: 'Sales at risk', num: 1, render: r => usd(r.risk) }], rows);
+  }
+  ['wDemand', 'wDelay'].forEach(id => $(id).addEventListener('input', drawWhatIf)); drawWhatIf();
+
+  // ---------- Confidence intervals ----------
+  function drawCI() {
+    const y = +$('ciyear').value; const rows = D.confidence.filter(r => r.Year === y).sort((a, b) => b.NetSalesUSD - a.NetSalesUSD);
+    if (rows.length) $('cireps').textContent = rows[0].Replicates;
+    table('citable', [
+      { label: 'Disease category', key: 'DiseaseCategory' },
+      { label: 'Net sales', num: 1, render: r => usd(r.NetSalesUSD) },
+      { label: '95% interval', num: 1, render: r => usd(r.NetSalesCI95LowUSD) + ' – ' + usd(r.NetSalesCI95HighUSD) },
+      { label: '±', num: 1, render: r => pct(r.NetSalesMarginOfErrorPct) },
+      { label: 'Gross margin', num: 1, render: r => pct(r.GrossMarginPct, 2) },
+      { label: '95% interval', num: 1, render: r => pct(r.GrossMarginCI95LowPct, 2) + ' – ' + pct(r.GrossMarginCI95HighPct, 2) }], rows);
+  }
+  $('ciyear').addEventListener('change', drawCI); drawCI();
+
+  // ---------- DQ ----------
+  table('counts', [{ label: 'Table', key: 'TableName' }, { label: 'Rows', num: 1, render: r => fmt(r.Rows) }], D.table_counts);
+  $('dqtitle').textContent = `Checks in the last run: ${dqPass} passed, ${D.dq_latest.length - dqPass} not passed`;
+  table('dqtable', [
+    { label: 'Check', key: 'check_name' }, { label: 'Layer', render: r => r.check_file.replace('dq_', '').replace('.sql', '') },
+    { label: 'Failed rows', num: 1, render: r => fmt(r.failed_rows) },
+    { label: 'Result', render: r => pill(r.status, r.status === 'PASS' ? 'good' : r.status === 'WARN' ? 'warn' : 'bad') }], D.dq_latest);
+
+  $('foot').textContent = 'Source: DuckDB warehouse built by the Airflow DAG pharma_sdi_data_mart (repo: pharma-sdi-data-mart). Packs = selling units. Money in USD as recorded in the source data.';
+
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { drawQ1(); drawQ1Year(); drawQ2(); }, 150); });
+})();
+</script>
+</body>
+</html>

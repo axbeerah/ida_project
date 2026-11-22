@@ -1,0 +1,352 @@
+>> select 'm', count(*) from m
+   ('m', 63)
+>> select 'mf', count(*) from mf
+   ('mf', 561)
+>> select 'sh', count(*) from sh
+   ('sh', 999)
+>> select 'wh', count(*) from wh
+   ('wh', 112184)
+>> select 's', count(*) from s
+   ('s', 500000)
+>> select 'h', count(*) from h
+   ('h', 27216)
+>> select 'iot', count(*) from iot
+   ('iot', 293425)
+m NULLS: {}
+mf NULLS: {'CostPerReleasedPackUSD': 5}
+sh NULLS: {}
+wh NULLS: {'DockToStockHours': 111220, 'OrderPickingAccuracyPct': 1961}
+s NULLS: {'HospitalID': 390808, 'PrescriptionID': 37316}
+h NULLS: {}
+iot NULLS: {'ShipmentID': 210432, 'SSCC18': 210432, 'WarehouseID': 82993, 'StorageZoneID': 82993}
+>> select "SalesChannel", count(*) from s group by 1 order by 2 desc limit 15
+   ('Physical Pharmacy', 414240)
+   ('Ecommerce', 85760)
+>> select "PharmacyType", count(*) from s group by 1 order by 2 desc limit 15
+   ('Chain Pharmacy', 222221)
+   ('Independent Pharmacy', 168587)
+   ('Hospital Pharmacy', 109192)
+>> select "PayerType", count(*) from s group by 1 order by 2 desc limit 15
+   ('Government program', 166751)
+   ('Insurance', 166434)
+   ('Cash', 130292)
+   ('Hospital formulary', 36523)
+>> select "PaymentMethod", count(*) from s group by 1 order by 2 desc limit 15
+   ('Card', 181205)
+   ('Insurance claim', 138105)
+   ('Cash', 137818)
+   ('Digital wallet', 42872)
+>> select "CustomerSegment", count(*) from s group by 1 order by 2 desc limit 15
+   ('General wellness', 100542)
+   ('Pediatric household', 100084)
+   ('Senior chronic care', 100083)
+   ('Adult acute care', 99748)
+   ('Adult chronic care', 99543)
+>> select "EcommerceDeliveryStatus", count(*) from s group by 1 order by 2 desc limit 15
+   ('Not applicable', 414240)
+   ('Delivered', 64162)
+   ('Returned to sender', 21598)
+>> select "PrescriptionRequiredFlag", count(*) from s group by 1 order by 2 desc limit 15
+   ('Y', 462684)
+   ('N', 37316)
+>> select "SaleStatus", count(*) from s group by 1 order by 2 desc limit 15
+   ('Completed', 494028)
+   ('Partially returned', 5972)
+>> select "ReturnFlag", count(*) from s group by 1 order by 2 desc limit 15
+   ('N', 494028)
+   ('Y', 5972)
+>> select "PromotionCode", count(*) from s group by 1 order by 2 desc limit 15
+   ('None', 420276)
+   ('SEASON5', 20058)
+   ('ONLINE10', 19964)
+   ('LOYALTY5', 19959)
+   ('WELLNESS8', 19743)
+>> select "CountryCode", count(*) from s group by 1 order by 2 desc limit 15
+   ('US', 500000)
+>> select "PharmacyState", count(*) from s group by 1 order by 2 desc limit 15
+   ('CA', 61444)
+   ('PA', 54606)
+   ('MA', 49870)
+   ('TX', 49806)
+   ('CT', 44774)
+   ('IL', 33547)
+   ('NV', 31056)
+   ('NY', 28073)
+   ('MI', 26776)
+   ('CO', 25048)
+   ('OH', 24527)
+   ('GA', 18733)
+   ('NC', 17569)
+   ('TN', 17209)
+   ('FL', 16962)
+>> select "SourceWarehouseID", count(*) from s group by 1 order by 2 desc limit 15
+   ('WH006', 94644)
+   ('WH004', 92500)
+   ('WH002', 84850)
+   ('WH001', 82679)
+   ('WH003', 74854)
+   ('WH005', 70473)
+>> select "HospitalType", count(*) from h group by 1 order by 2 desc limit 15
+   ('Academic Medical Center', 9072)
+   ('General Hospital', 9072)
+   ('Community Hospital', 6804)
+   ('Specialty Hospital', 2268)
+>> select "TraumaLevel", count(*) from h group by 1 order by 2 desc limit 15
+   ('None', 13608)
+   ('Level I', 6804)
+   ('Level II', 6804)
+>> select "FormularyStatus", count(*) from h group by 1 order by 2 desc limit 15
+   ('Formulary', 23328)
+   ('Restricted', 2160)
+   ('Non-formulary exception', 1728)
+>> select "MedicationRequestStatus", count(*) from h group by 1 order by 2 desc limit 15
+   ('Completed', 27133)
+   ('Partially fulfilled', 83)
+>> select "State", count(*) from h group by 1 order by 2 desc limit 15
+   ('PA', 4536)
+   ('TX', 4536)
+   ('GA', 2268)
+   ('NY', 2268)
+   ('MA', 2268)
+   ('MI', 2268)
+   ('NV', 2268)
+   ('FL', 2268)
+   ('IL', 2268)
+   ('CA', 2268)
+>> select "City", count(*) from h group by 1 order by 2 desc limit 15
+   ('Atlanta', 2268)
+   ('Miami', 2268)
+   ('Philadelphia', 2268)
+   ('Boston', 2268)
+   ('Chicago', 2268)
+   ('Detroit', 2268)
+   ('Houston', 2268)
+   ('Los Angeles', 2268)
+   ('Las Vegas', 2268)
+   ('Pittsburgh', 2268)
+   ('New York', 2268)
+   ('Dallas', 2268)
+>> select "HospitalID", count(*) from h group by 1 order by 2 desc limit 15
+   ('HOSP011', 2268)
+   ('HOSP012', 2268)
+   ('HOSP001', 2268)
+   ('HOSP002', 2268)
+   ('HOSP005', 2268)
+   ('HOSP006', 2268)
+   ('HOSP007', 2268)
+   ('HOSP010', 2268)
+   ('HOSP003', 2268)
+   ('HOSP004', 2268)
+   ('HOSP008', 2268)
+   ('HOSP009', 2268)
+>> select "HospitalPharmacyID", count(*) from h group by 1 order by 2 desc limit 15
+   ('PHR011', 2268)
+   ('PHR003', 2268)
+   ('PHR004', 2268)
+   ('PHR006', 2268)
+   ('PHR008', 2268)
+   ('PHR010', 2268)
+   ('PHR012', 2268)
+   ('PHR001', 2268)
+   ('PHR002', 2268)
+   ('PHR005', 2268)
+   ('PHR007', 2268)
+   ('PHR009', 2268)
+>> select "InventoryStatus", count(*) from wh group by 1 order by 2 desc limit 15
+   ('Available', 104092)
+   ('Near expiry', 5316)
+   ('Quarantined', 1945)
+   ('Depleted', 815)
+   ('Expired', 16)
+>> select "WarehouseActivityStatus", count(*) from wh group by 1 order by 2 desc limit 15
+   ('Pick and dispatch', 110223)
+   ('Receive and putaway', 964)
+   ('Storage monitoring', 949)
+   ('Cycle count', 32)
+   ('Expiry disposal pending', 16)
+>> select "StorageCondition", count(*) from wh group by 1 order by 2 desc limit 15
+   ('15-25 C', 108685)
+   ('2-8 C', 3499)
+>> select "WarehouseID", count(*) from wh group by 1 order by 2 desc limit 15
+   ('WH006', 22122)
+   ('WH003', 20601)
+   ('WH002', 18831)
+   ('WH004', 18383)
+   ('WH001', 18332)
+   ('WH005', 13915)
+>> select "StockoutFlag", count(*) from wh group by 1 order by 2 desc limit 15
+   ('N', 111643)
+   ('Y', 541)
+>> select "NearExpiryFlag", count(*) from wh group by 1 order by 2 desc limit 15
+   ('N', 106868)
+   ('Y', 5316)
+>> select "DiseaseCategory", count(*) from m group by 1 order by 2 desc limit 15
+   ('Diabetes Mellitus', 9)
+   ('Infectious Disease', 9)
+   ('Gastrointestinal Disease', 9)
+   ('Pain and Inflammatory Conditions', 9)
+   ('Cardiovascular Disease', 9)
+   ('Respiratory Disease', 9)
+   ('Neurological and Mental Health Conditions', 9)
+>> select "DosageForm", count(*) from m group by 1 order by 2 desc limit 15
+   ('Tablet', 35)
+   ('Capsule', 8)
+   ('Gastro-resistant tablet', 5)
+   ('Dry-powder inhaler', 3)
+   ('Solution for injection', 2)
+   ('Gastro-resistant capsule', 2)
+   ('Metered-dose inhaler', 2)
+   ('Pre-filled pen', 1)
+   ('Effervescent tablet', 1)
+   ('Nebulizer solution', 1)
+   ('Inhalation capsule', 1)
+   ('Oral solution', 1)
+   ('Modified-release tablet', 1)
+>> select "RouteOfAdministration", count(*) from m group by 1 order by 2 desc limit 15
+   ('Oral', 53)
+   ('Inhalation', 7)
+   ('Subcutaneous', 3)
+>> select "PrescriptionClass", count(*) from m group by 1 order by 2 desc limit 15
+   ('Prescription', 58)
+   ('OTC', 5)
+>> select "ColdChainFlag", count(*) from m group by 1 order by 2 desc limit 15
+   ('N', 60)
+   ('Y', 3)
+>> select "ControlledMedicineFlag", count(*) from m group by 1 order by 2 desc limit 15
+   ('N', 61)
+   ('Y', 2)
+>> select "ProductStatus", count(*) from m group by 1 order by 2 desc limit 15
+   ('Active', 63)
+>> select "EffectiveFromDate", count(*) from m group by 1 order by 2 desc limit 15
+   ('2023-01-01', 63)
+>> select "BaseUnitOfMeasure", count(*) from m group by 1 order by 2 desc limit 15
+   ('pack', 55)
+   ('device', 8)
+>> select "BatchStatus", count(*) from mf group by 1 order by 2 desc limit 15
+   ('Released', 556)
+   ('Rejected', 5)
+>> select "QualityTestStatus", count(*) from mf group by 1 order by 2 desc limit 15
+   ('Passed', 542)
+   ('Conditional pass', 14)
+   ('Failed', 5)
+>> select "DestinationWarehouseID", count(*) from sh group by 1 order by 2 desc limit 15
+   ('WH006', 184)
+   ('WH001', 172)
+   ('WH002', 170)
+   ('WH004', 170)
+   ('WH003', 161)
+   ('WH005', 142)
+>> select "DestinationCity", count(*) from sh group by 1 order by 2 desc limit 15
+   ('Worcester', 184)
+   ('Allentown', 172)
+   ('Ontario', 170)
+   ('Joliet', 170)
+   ('Dallas', 161)
+   ('Atlanta', 142)
+>> select "DestinationState", count(*) from sh group by 1 order by 2 desc limit 15
+   ('MA', 184)
+   ('PA', 172)
+   ('CA', 170)
+   ('IL', 170)
+   ('TX', 161)
+   ('GA', 142)
+>> select count(distinct PharmacyID), count(distinct PharmacyName), count(distinct (PharmacyID,PharmacyName,PharmacyType,PharmacyCity,PharmacyState)) fro
+   (60, 60, 60)
+>> select PharmacyType, HospitalID is null, SalesChannel, count(distinct PharmacyID) from s group by all order by all
+   ('Chain Pharmacy', True, 'Ecommerce', 28)
+   ('Chain Pharmacy', True, 'Physical Pharmacy', 28)
+   ('Hospital Pharmacy', False, 'Physical Pharmacy', 12)
+   ('Independent Pharmacy', True, 'Ecommerce', 20)
+   ('Independent Pharmacy', True, 'Physical Pharmacy', 20)
+>> select min(SalesDate),max(SalesDate),min(SalesTimestampUTC) from s
+   ('2023-01-30', '2025-12-31', '2023-01-30T23:29:47Z')
+>> select min(DemandMonth),max(DemandMonth) from h
+   ('2023-01-01', '2025-12-01')
+>> select min(SnapshotDate),max(SnapshotDate) from wh
+   ('2023-01-23', '2025-12-31')
+>> select count(*) from s where abs(cast(GrossSalesAmountUSD as double)-cast(QuantitySoldPacks as int)*cast(UnitRetailPriceUSD as double))>0.011
+   (0,)
+>> select count(*) from s where abs(cast(NetSalesAmountUSD as double)-(cast(GrossSalesAmountUSD as double)-cast(DiscountAmountUSD as double)))>0.011
+   (0,)
+>> select count(*) from s where abs(cast(GrossMarginUSD as double)-(cast(NetSalesAmountUSD as double)-cast(CostOfGoodsSoldUSD as double)))>0.011
+   (0,)
+>> select count(*) from s where cast(ReturnedQuantityPacks as int)>cast(QuantitySoldPacks as int)
+   (0,)
+>> select count(*), count(*) filter (where DispensedQuantityPacks=ConsumedQuantityPacks) from h
+   (27216, 92)
+>> select count(*) filter (where cast(UnfulfilledDemandPacks as int)<>cast(RequestedQuantityPacks as int)-cast(ReceivedQuantityPacks as int)), count(*) f
+   (27123, 0, 0)
+>> select count(distinct (HospitalID,DemandMonth)), count(distinct (HospitalID,DemandMonth,OutpatientEncounters)), count(distinct (HospitalID,DemandMonth
+   (432, 26894, 17216, 3024, 12, 12, 432)
+>> select count(*) from wh where cast(ClosingQuantityPacks as int) <> cast(OpeningQuantityPacks as int)+cast(ReceivedQuantityPacks as int)-cast(ShippedQu
+   (0,)
+>> select count(distinct MedicineID), count(*) from m
+   (63, 63)
+>> select count(distinct WarehouseID) from wh
+   (6,)
+>> select distinct DestinationWarehouseID, DestinationCity, DestinationState from sh order by 1
+   ('WH001', 'Allentown', 'PA')
+   ('WH002', 'Joliet', 'IL')
+   ('WH003', 'Dallas', 'TX')
+   ('WH004', 'Ontario', 'CA')
+   ('WH005', 'Atlanta', 'GA')
+   ('WH006', 'Worcester', 'MA')
+>> select count(*) from s where WarehouseLotID not in (select WarehouseLotID from wh)
+   (0,)
+>> select count(*) from s where ProductionBatchID not in (select ProductionBatchID from mf)
+   (0,)
+>> select count(*) from s where MedicineID not in (select MedicineID from m)
+   (0,)
+>> select count(*) from h where HospitalPharmacyID not in (select PharmacyID from s)
+   (0,)
+>> select count(distinct (s.WarehouseLotID)) , count(*) filter (where s.BatchExpiryDate<>l.e) from s join (select WarehouseLotID, any_value(BatchExpiryDa
+   (956, 0)
+>> select count(*) from (select WarehouseLotID from wh group by 1 having count(distinct (MedicineID,WarehouseID,ProductionBatchID,BatchExpiryDate))>1)
+   (0,)
+>> select count(*) from wh w join mf using(ProductionBatchID) where w.BatchExpiryDate<>mf.ExpiryDate
+   (0,)
+>> select count(*) from (select WarehouseID from wh group by 1 having count(distinct WarehouseTotalCapacityPacks)>1)
+   (0,)
+>> select count(distinct (DateKey)) from (select SnapshotDate DateKey from wh)
+   (1074,)
+>> select count(*) , count(distinct (HospitalID,MedicineID,DemandMonth)) from h
+   (27216, 27216)
+>> select count(*) - count(distinct SalesTransactionID) from s
+   (0,)
+>> select min(cast(DaysToExpiryAtSale as int)), count(*) filter (where cast(DaysToExpiryAtSale as int) <> datediff('day',cast(SalesDate as date),cast(Bat
+   (9, 0)
+>> select count(*) from h where cast(ICUBeds as int)>cast(LicensedBeds as int)
+   (0,)
+>> select count(distinct PromotionCode) from s
+   (5,)
+>> select HospitalID, HospitalPharmacyID, City, State, LicensedBeds from h group by all order by 1
+   ('HOSP001', 'PHR001', 'Philadelphia', 'PA', '850')
+   ('HOSP002', 'PHR002', 'Pittsburgh', 'PA', '520')
+   ('HOSP003', 'PHR003', 'New York', 'NY', '310')
+   ('HOSP004', 'PHR004', 'Boston', 'MA', '740')
+   ('HOSP005', 'PHR005', 'Chicago', 'IL', '280')
+   ('HOSP006', 'PHR006', 'Detroit', 'MI', '610')
+   ('HOSP007', 'PHR007', 'Dallas', 'TX', '690')
+   ('HOSP008', 'PHR008', 'Houston', 'TX', '780')
+   ('HOSP009', 'PHR009', 'Los Angeles', 'CA', '920')
+   ('HOSP010', 'PHR010', 'Las Vegas', 'NV', '360')
+   ('HOSP011', 'PHR011', 'Atlanta', 'GA', '640')
+   ('HOSP012', 'PHR012', 'Miami', 'FL', '330')
+>> select PharmacyID, HospitalID, PharmacyType from s where HospitalID is not null group by all order by 1
+   ('PHR001', 'HOSP001', 'Hospital Pharmacy')
+   ('PHR002', 'HOSP002', 'Hospital Pharmacy')
+   ('PHR003', 'HOSP003', 'Hospital Pharmacy')
+   ('PHR004', 'HOSP004', 'Hospital Pharmacy')
+   ('PHR005', 'HOSP005', 'Hospital Pharmacy')
+   ('PHR006', 'HOSP006', 'Hospital Pharmacy')
+   ('PHR007', 'HOSP007', 'Hospital Pharmacy')
+   ('PHR008', 'HOSP008', 'Hospital Pharmacy')
+   ('PHR009', 'HOSP009', 'Hospital Pharmacy')
+   ('PHR010', 'HOSP010', 'Hospital Pharmacy')
+   ('PHR011', 'HOSP011', 'Hospital Pharmacy')
+   ('PHR012', 'HOSP012', 'Hospital Pharmacy')
+>> select count(*) filter (where GTIN14 not similar to '[0-9]{14}') from m
+   (0,)
+>> select SalesChannel, count(*), sum(cast(NetSalesAmountUSD as double)) from s group by 1
+   ('Physical Pharmacy', 414240, 4960122.180000311)
+   ('Ecommerce', 85760, 1010936.5799999202)

@@ -1,0 +1,8 @@
+DiseaseCategory,AvgDailyPacksSold,AvgDailyShippedPacks,NetPricePerPackUSD,MarginPerPackUSD,AvgMonthlyHospitalConsumption,CurrentStockPacks,DaysOfCover
+Cardiovascular Disease,80.5,1162.3,4.72,1.1,28109.0,95962,82.6
+Diabetes Mellitus,71.8,976.2,22.26,5.21,21440.0,89981,92.2
+Gastrointestinal Disease,92.5,1317.7,9.93,2.32,18113.0,85879,65.2
+Infectious Disease,92.2,1374.9,6.62,1.55,21456.0,86584,63.0
+Neurological and Mental Health Conditions,88.7,1252.2,7.29,1.71,16184.0,104623,83.6
+Pain and Inflammatory Conditions,78.8,1304.3,4.65,1.09,30725.0,117363,90.0
+Respiratory Disease,81.3,1243.3,17.33,4.05,26175.0,103514,83.3

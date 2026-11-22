@@ -1,0 +1,19 @@
+-- Data-quality checks on the STAR SCHEMA after loading: reconciliation and referential integrity.
+select 'reconcile: fact_pharmacy_sales rows = staging rows', 'error', abs((select count(*) from dwh.fact_pharmacy_sales) - (select count(*) from stg.pharmacy_sale));
+select 'reconcile: fact_hospital_demand rows = staging rows', 'error', abs((select count(*) from dwh.fact_hospital_demand) - (select count(*) from stg.hospital_demand));
+select 'reconcile: fact_inventory_snapshot rows = staging rows', 'error', abs((select count(*) from dwh.fact_inventory_snapshot) - (select count(*) from stg.inventory_snapshot));
+select 'reconcile: net sales total (cents) matches staging', 'error', abs(round(100 * ((select sum(NetSalesAmountUSD) from dwh.fact_pharmacy_sales) - (select sum(NetSalesAmountUSD) from stg.pharmacy_sale))))::bigint;
+select 'reconcile: consumed packs total matches staging', 'error', abs((select sum(ConsumedQuantityPacks) from dwh.fact_hospital_demand) - (select sum(ConsumedQuantityPacks) from stg.hospital_demand));
+select 'grain: SalesTransactionID unique in fact', 'error', count(*) - count(distinct SalesTransactionID) from dwh.fact_pharmacy_sales;
+select 'grain: (DateKey, HospitalKey, MedicineKey) unique in demand fact', 'error', count(*) - count(distinct (DateKey, HospitalKey, MedicineKey)) from dwh.fact_hospital_demand;
+select 'grain: (DateKey, LotKey) unique in inventory fact', 'error', count(*) - count(distinct (DateKey, LotKey)) from dwh.fact_inventory_snapshot;
+select 'unknown member: sales rows with an Unknown (-1) key', 'warn', count(*) from dwh.fact_pharmacy_sales where -1 in (DateKey, MedicineKey, PharmacyKey, ChannelKey, WarehouseKey, LotKey, BatchKey);
+select 'unknown member: demand rows with an Unknown (-1) key', 'warn', count(*) from dwh.fact_hospital_demand where -1 in (DateKey, HospitalKey, MedicineKey, DemandStatusKey);
+select 'unknown member: inventory rows with an Unknown (-1) key', 'warn', count(*) from dwh.fact_inventory_snapshot where -1 in (DateKey, WarehouseKey, LotKey, MedicineKey);
+select 'hospital pharmacy sales carry a real HospitalKey', 'error', count(*) from dwh.fact_pharmacy_sales f join dwh.dim_pharmacy p using (PharmacyKey) where p.HospitalPharmacyFlag = 'Yes' and f.HospitalKey = -1;
+select 'FK: sales MedicineKey exists in DimMedicine', 'error', count(*) from dwh.fact_pharmacy_sales f where not exists (select 1 from dwh.dim_medicine d where d.MedicineKey = f.MedicineKey);
+select 'FK: sales DateKey exists in DimDate', 'error', count(*) from dwh.fact_pharmacy_sales f where not exists (select 1 from dwh.dim_date d where d.DateKey = f.DateKey);
+select 'dim: one current DimMedicine row per MedicineID', 'error', count(*) from (select MedicineID from dwh.dim_medicine where CurrentFlag = 'Yes' group by 1 having count(*) > 1);
+select 'dim: no overlapping SCD2 date ranges', 'error', count(*) from dwh.dim_medicine a join dwh.dim_medicine b on a.MedicineID = b.MedicineID and a.MedicineKey < b.MedicineKey and a.EffectiveFromDate <= b.EffectiveToDate and b.EffectiveFromDate <= a.EffectiveToDate;
+select 'dim: natural keys unique (pharmacy, hospital, warehouse, lot, batch)', 'error', (select count(*) - count(distinct PharmacyID) from dwh.dim_pharmacy) + (select count(*) - count(distinct HospitalID) from dwh.dim_hospital) + (select count(*) - count(distinct WarehouseID) from dwh.dim_warehouse) + (select count(*) - count(distinct WarehouseLotID) from dwh.dim_lot) + (select count(*) - count(distinct ProductionBatchID) from dwh.dim_batch);
+select 'location: every pharmacy/hospital/warehouse has a location', 'error', (select count(*) from dwh.dim_pharmacy where PharmacyKey <> -1 and LocationKey = -1) + (select count(*) from dwh.dim_hospital where HospitalKey <> -1 and LocationKey = -1) + (select count(*) from dwh.dim_warehouse where WarehouseKey <> -1 and LocationKey = -1);

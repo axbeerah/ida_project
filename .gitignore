@@ -1,0 +1,12 @@
+# warehouse database is rebuilt by the DAG (about 100 MB)
+warehouse/*.duckdb
+warehouse/*.duckdb.wal
+# uncompressed source CSVs (the repo ships the .csv.gz versions)
+data/raw/*.csv
+# local Airflow / Python
+airflow_home/
+logs/
+.venv/
+__pycache__/
+*.pyc
+.env

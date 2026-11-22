@@ -1,0 +1,79 @@
+YearMonth,State,DiseaseCategory,UnmetPacks,HospitalStockoutDays,WarehouseStockoutSnapshots,AvgLotClosingPacks,NearExpirySnapshots,SupplySideSignal
+2023-08,TX,Pain and Inflammatory Conditions,17,1,0,9035.3,0,Warehouse had stock
+2023-09,TX,Pain and Inflammatory Conditions,33,2,0,5966.2,0,Warehouse had stock
+2023-10,TX,Pain and Inflammatory Conditions,16,2,1,4120.0,0,Warehouse stockout same month
+2023-11,TX,Pain and Inflammatory Conditions,16,1,2,3964.5,0,Warehouse stockout same month
+2024-01,PA,Respiratory Disease,7,1,2,4687.4,0,Warehouse stockout same month
+2024-01,PA,Infectious Disease,9,2,1,7732.2,0,Warehouse stockout same month
+2024-02,PA,Respiratory Disease,17,1,0,6488.2,0,Warehouse had stock
+2024-03,CA,Cardiovascular Disease,13,1,1,5798.9,0,Warehouse stockout same month
+2024-03,TX,Respiratory Disease,22,1,0,7436.1,0,Warehouse had stock
+2024-04,TX,Pain and Inflammatory Conditions,57,4,1,172.8,0,Warehouse stockout same month
+2024-05,CA,Pain and Inflammatory Conditions,62,5,0,4889.7,0,Warehouse had stock
+2024-05,PA,Infectious Disease,3,1,0,4408.8,0,Warehouse had stock
+2024-05,TX,Pain and Inflammatory Conditions,5,1,0,11341.9,0,Warehouse had stock
+2024-06,CA,Pain and Inflammatory Conditions,7,1,0,3850.3,0,Warehouse had stock
+2024-07,MA,Respiratory Disease,111,6,0,6770.3,0,Warehouse had stock
+2024-07,PA,Infectious Disease,1,1,0,6098.7,0,Warehouse had stock
+2024-09,CA,Pain and Inflammatory Conditions,152,1,0,4346.3,12,Warehouse had stock
+2024-11,PA,Infectious Disease,7,1,0,3519.1,0,Warehouse had stock
+2024-12,TX,Respiratory Disease,3,1,0,4460.9,31,Warehouse had stock
+2024-12,PA,Infectious Disease,103,4,1,5546.9,0,Warehouse stockout same month
+2024-12,CA,Neurological and Mental Health Conditions,54,1,0,4571.6,0,Warehouse had stock
+2024-12,CA,Pain and Inflammatory Conditions,23,2,0,5910.2,31,Warehouse had stock
+2025-01,PA,Infectious Disease,1,1,1,4365.7,0,Warehouse stockout same month
+2025-02,TX,Cardiovascular Disease,32,2,1,3720.0,0,Warehouse stockout same month
+2025-02,PA,Infectious Disease,1,1,0,4534.1,0,Warehouse had stock
+2025-02,CA,Pain and Inflammatory Conditions,12,1,1,5020.4,28,Warehouse stockout same month
+2025-02,CA,Neurological and Mental Health Conditions,1,1,0,6312.6,0,Warehouse had stock
+2025-03,PA,Infectious Disease,3,1,1,4413.0,23,Warehouse stockout same month
+2025-04,CA,Pain and Inflammatory Conditions,9,1,2,5841.6,0,Warehouse stockout same month
+2025-07,GA,Infectious Disease,1,1,0,9239.5,0,Warehouse had stock
+2025-08,PA,Infectious Disease,24,4,0,5525.4,0,Warehouse had stock
+2025-08,GA,Infectious Disease,21,2,0,8953.7,0,Warehouse had stock
+2025-09,PA,Diabetes Mellitus,12,1,0,4311.9,0,Warehouse had stock
+2025-09,TX,Infectious Disease,37,1,0,4231.4,60,Warehouse had stock
+2025-10,TX,Pain and Inflammatory Conditions,92,7,0,5628.3,0,Warehouse had stock
+2025-11,CA,Respiratory Disease,24,2,0,5730.5,30,Warehouse had stock
+2025-11,TX,Pain and Inflammatory Conditions,18,1,2,5881.4,0,Warehouse stockout same month
+2025-12,PA,Infectious Disease,11,2,1,3817.6,31,Warehouse stockout same month
+2025-12,MA,Pain and Inflammatory Conditions,6,1,0,5036.5,31,Warehouse had stock
+2025-08,CA,Pain and Inflammatory Conditions,7,1,0,6662.4,0,Warehouse had stock
+2023-06,TX,Respiratory Disease,19,2,0,10962.4,0,Warehouse had stock
+2023-07,CA,Pain and Inflammatory Conditions,28,1,0,9773.7,0,Warehouse had stock
+2023-09,CA,Pain and Inflammatory Conditions,14,1,0,7990.5,0,Warehouse had stock
+2023-12,TX,Pain and Inflammatory Conditions,153,3,0,4116.1,0,Warehouse had stock
+2024-01,CA,Pain and Inflammatory Conditions,90,2,1,4607.9,0,Warehouse stockout same month
+2024-02,CA,Pain and Inflammatory Conditions,38,2,3,4845.1,0,Warehouse stockout same month
+2024-04,MA,Cardiovascular Disease,7,2,1,42.5,0,Warehouse stockout same month
+2024-06,PA,Infectious Disease,11,1,0,7257.4,0,Warehouse had stock
+2024-07,CA,Pain and Inflammatory Conditions,52,2,0,5568.5,0,Warehouse had stock
+2024-08,PA,Infectious Disease,73,5,0,5267.8,0,Warehouse had stock
+2024-08,CA,Pain and Inflammatory Conditions,8,1,0,4852.2,0,Warehouse had stock
+2024-10,PA,Infectious Disease,12,2,0,4599.0,0,Warehouse had stock
+2024-11,TX,Respiratory Disease,31,2,0,4131.5,30,Warehouse had stock
+2024-12,CA,Cardiovascular Disease,23,2,0,6388.2,0,Warehouse had stock
+2024-12,MA,Respiratory Disease,64,2,0,6182.9,0,Warehouse had stock
+2025-01,CA,Neurological and Mental Health Conditions,86,5,2,4240.5,0,Warehouse stockout same month
+2025-02,MA,Respiratory Disease,8,1,1,5856.1,0,Warehouse stockout same month
+2025-03,TX,Cardiovascular Disease,9,1,1,6327.6,0,Warehouse stockout same month
+2025-03,CA,Neurological and Mental Health Conditions,41,6,0,6291.6,0,Warehouse had stock
+2025-05,CA,Neurological and Mental Health Conditions,5,1,0,5395.4,0,Warehouse had stock
+2025-05,CA,Pain and Inflammatory Conditions,174,6,0,6477.7,0,Warehouse had stock
+2025-06,PA,Diabetes Mellitus,46,5,0,5625.4,0,Warehouse had stock
+2025-06,CA,Pain and Inflammatory Conditions,152,9,0,5580.7,0,Warehouse had stock
+2025-07,CA,Pain and Inflammatory Conditions,10,1,0,6774.9,0,Warehouse had stock
+2025-08,TX,Respiratory Disease,38,3,1,4492.2,82,Warehouse stockout same month
+2025-10,TX,Diabetes Mellitus,15,2,0,6084.6,31,Warehouse had stock
+2025-10,PA,Diabetes Mellitus,64,1,0,4801.4,0,Warehouse had stock
+2025-10,PA,Infectious Disease,12,1,0,4110.8,31,Warehouse had stock
+2025-10,TX,Respiratory Disease,100,3,0,5061.2,62,Warehouse had stock
+2025-10,CA,Pain and Inflammatory Conditions,12,1,0,5131.2,0,Warehouse had stock
+2025-11,PA,Infectious Disease,19,2,2,2308.1,30,Warehouse stockout same month
+2025-11,TX,Respiratory Disease,6,1,1,6134.2,30,Warehouse stockout same month
+2025-12,TX,Respiratory Disease,3,1,1,5699.6,30,Warehouse stockout same month
+2025-12,PA,Pain and Inflammatory Conditions,6,1,0,3733.8,0,Warehouse had stock
+2023-06,TX,Pain and Inflammatory Conditions,4,1,0,,0,No warehouse in state
+2025-11,MI,Cardiovascular Disease,57,3,0,,0,No warehouse in state
+2025-03,MI,Cardiovascular Disease,8,1,0,,0,No warehouse in state
+2025-12,MI,Cardiovascular Disease,15,1,0,,0,No warehouse in state
